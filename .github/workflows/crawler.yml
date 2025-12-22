@@ -44,25 +44,29 @@ jobs:
             exit 1
           fi
 
-      # 1. 运行爬虫 (不再删除 index.html)
+      # 1. 正常运行爬虫 (不删除 index.html，让它去更新)
       - name: Run crawler
         env:
           STORAGE_BACKEND: local
           GITHUB_ACTIONS: true
         run: python -m trendradar
 
-      # 2. 【核心修复】添加 .nojekyll 防止资源被屏蔽
-      # 这一步非常重要！没有它，_image 文件夹会被 GitHub 忽略，导致页面坏掉
-      - name: Create .nojekyll file
-        run: touch .nojekyll
-
-      # 3. 验证一下文件变化 (给你看证据)
-      - name: Check Files
+      # 2. 【核心】实锤验证步骤
+      # 这一步会直接读取生成的 index.html 内容，打印出里面的日期。
+      # 无论网页显示什么，我们以这里的日志为准！
+      - name: 🔍 Proof of Content (Check logs here!)
         run: |
-          echo "Looking for today's data:"
-          ls -R output/$(date +%F) || echo "Data saved to DB"
-          echo "Checking index.html size:"
-          ls -lh index.html
+          echo "正在检查 index.html 里的内容..."
+          # 提取包含 '更新时间' 或 '2025' 的行
+          grep -E "2025|更新时间|created" index.html | head -n 5
+          
+          echo "-----------------------------------"
+          echo "检查文件最后修改时间："
+          ls -l --time-style=long-iso index.html
+
+      # 3. 防止资源屏蔽
+      - name: Create .nojekyll
+        run: touch .nojekyll
 
       # 4. 部署
       - name: Fix permissions

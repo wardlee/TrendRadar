@@ -44,27 +44,35 @@ jobs:
             exit 1
           fi
 
-      # 1. 运行爬虫
+      # 【关键步骤】运行前先删除旧网页，强迫脚本生成新的
+      - name: Remove old index.html
+        run: |
+          echo "Deleting old index.html to force regeneration..."
+          rm -f index.html
+
+      # 运行爬虫
       - name: Run crawler
         env:
           STORAGE_BACKEND: local
           GITHUB_ACTIONS: true
         run: python -m trendradar
 
-      # 2. 验证生成 (日志里确认一下)
-      - name: Verify Generation
+      # 【关键步骤】检查到底生成了什么
+      - name: Verify Content (Debug)
         run: |
-          echo "Current Date Folder:"
-          ls -R output/$(date +%F) || echo "Today's folder not found yet (normal if using db)"
-          echo "Root index.html:"
+          echo "=== 检查 index.html 是否重生 ==="
           ls -lh index.html
+          
+          echo "=== 偷看网页里的日期 ==="
+          # 搜索网页里包含 2025 的行，看看是不是今天的
+          grep -C 5 "2025" index.html || echo "⚠️ 警告：网页里没找到 2025 字样"
+          
+          echo "=== 检查今天的数据目录 ==="
+          ls -R output/$(date +%F) || echo "Output folder not found"
 
-      # 3. 【关键修复】禁用 Jekyll 处理
-      # 这一步非常重要！防止 _image 文件夹被 GitHub 忽略
-      - name: Create .nojekyll file
+      - name: Create .nojekyll
         run: touch .nojekyll
 
-      # 4. 部署步骤
       - name: Fix permissions
         run: |
           chmod -c -R +rX . | while read line; do echo "::warning title=Invalid Permissions Fixed::$line"; done

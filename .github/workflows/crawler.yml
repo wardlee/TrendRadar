@@ -5,7 +5,7 @@ on:
     - cron: "33 * * * *"
   workflow_dispatch:
 
-# 🔒 权限设置：必须赋予 Pages 写入权限
+# 🔒 权限设置
 permissions:
   contents: read
   pages: write
@@ -16,7 +16,6 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # 将抓取和部署合并为一个 Job
   build-and-deploy:
     environment:
       name: github-pages
@@ -46,37 +45,33 @@ jobs:
             exit 1
           fi
 
-      # --- 1. 运行爬虫 ---
+      # 1. 运行爬虫
       - name: Run crawler
         env:
-          # 强制使用本地存储，确保生成 output 目录
           STORAGE_BACKEND: local
-          # 这里保留你的 Secrets 引用，如果以后你要配飞书通知，直接在 GitHub 后台加 Secrets 即可生效
-          # 如果没配 Secrets，脚本会自动跳过通知，只生成文件，不影响网页更新
           GITHUB_ACTIONS: true
         run: python -m trendradar
 
-      # --- 2. 检查生成结果 (调试用) ---
-      - name: Check Output
+      # 2. 验证生成 (这次我们检查根目录，你会看到 index.html 变新了)
+      - name: Verify Generation
         run: |
-          echo "查看 output 目录内容:"
-          ls -R output/ || echo "Output directory not found!"
+          echo "检查 index.html 是否存在..."
+          ls -lh index.html
+          echo "检查 output 目录..."
+          ls -R output/
 
-      # --- 3. 部署到 GitHub Pages (核心步骤) ---
-      
-      # 修正权限，防止文件无法读取
+      # 3. 部署步骤 (核心修正)
       - name: Fix permissions
         run: |
-          chmod -c -R +rX output/ | while read line; do echo "::warning title=Invalid Permissions Fixed::$line"; done
+          chmod -c -R +rX . | while read line; do echo "::warning title=Invalid Permissions Fixed::$line"; done
 
-      # 上传构建产物：明确指定 path 为 'output'
-      # 这意味着 output/index.html 会变成你网站的首页
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'output'
+          # ⚠️ 关键修改：改成 '.' (当前目录)
+          # 这样会把根目录最新的 index.html 和 output 文件夹一起打包上传
+          path: '.'
 
-      # 正式发布
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

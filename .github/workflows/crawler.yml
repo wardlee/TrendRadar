@@ -5,7 +5,6 @@ on:
     - cron: "33 * * * *"
   workflow_dispatch:
 
-# 🔒 权限设置
 permissions:
   contents: read
   pages: write
@@ -52,15 +51,20 @@ jobs:
           GITHUB_ACTIONS: true
         run: python -m trendradar
 
-      # 2. 验证生成 (这次我们检查根目录，你会看到 index.html 变新了)
+      # 2. 验证生成 (日志里确认一下)
       - name: Verify Generation
         run: |
-          echo "检查 index.html 是否存在..."
+          echo "Current Date Folder:"
+          ls -R output/$(date +%F) || echo "Today's folder not found yet (normal if using db)"
+          echo "Root index.html:"
           ls -lh index.html
-          echo "检查 output 目录..."
-          ls -R output/
 
-      # 3. 部署步骤 (核心修正)
+      # 3. 【关键修复】禁用 Jekyll 处理
+      # 这一步非常重要！防止 _image 文件夹被 GitHub 忽略
+      - name: Create .nojekyll file
+        run: touch .nojekyll
+
+      # 4. 部署步骤
       - name: Fix permissions
         run: |
           chmod -c -R +rX . | while read line; do echo "::warning title=Invalid Permissions Fixed::$line"; done
@@ -68,8 +72,6 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # ⚠️ 关键修改：改成 '.' (当前目录)
-          # 这样会把根目录最新的 index.html 和 output 文件夹一起打包上传
           path: '.'
 
       - name: Deploy to GitHub Pages

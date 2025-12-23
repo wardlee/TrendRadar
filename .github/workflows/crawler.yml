@@ -46,6 +46,8 @@ concurrency:
 permissions:
   contents: read
   actions: write
+  pages: write
+  id-token: write
 
 jobs:
   crawl:
@@ -93,15 +95,9 @@ jobs:
             fi
           fi
 
-
-      # --------------------------------------------------------------------------------
       # 🚦 TRAFFIC CONTROL / 流量控制
-      # --------------------------------------------------------------------------------
-      # EN: Generates a random delay between 1 and 300 seconds (5 minutes).
-      #     Critical for load balancing.
-      #
-      # CN: 生成 1 到 300 秒（5分钟）之间的随机延迟。
-      #     这对负载均衡至关重要。
+      # 生成 1 到 300 秒（5分钟）之间的随机延迟
+      # 这对负载均衡至关重要
       - name: Random Delay (Traffic Control)
         if: success()
         run: |
@@ -161,3 +157,55 @@ jobs:
           S3_REGION: ${{ secrets.S3_REGION }}
           GITHUB_ACTIONS: true
         run: python -m trendradar
+
+      # 🔄 部署到 GitHub Pages - 新增步骤
+      - name: Update index.html for GitHub Pages
+        if: success()
+        run: |
+          # 查找最新的 HTML 报告文件
+          LATEST_REPORT=$(find output -name "*.html" -type f -printf '%T@ %p\n' | sort -n | tail -1 | cut -d' ' -f2-)
+          echo "Latest report: $LATEST_REPORT"
+
+          if [ -n "$LATEST_REPORT" ] && [ -f "$LATEST_REPORT" ]; then
+            echo "📄 Copying latest report to index.html"
+            cp "$LATEST_REPORT" ./index.html
+            echo "✅ index.html updated successfully"
+          else
+            echo "⚠️ No HTML report found, keeping existing index.html"
+          fi
+
+      - name: Setup Pages
+        if: success()
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        if: success()
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        if: success()
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Commit changes to repository
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # 检查 index.html 是否有更改
+          if git diff --quiet; then
+            echo "No changes to commit"
+          else
+            git add index.html
+            git commit -m "🔄 Update index.html with latest news report [skip ci]"
+            git push
+            echo "✅ Changes committed and pushed"
+          fi
+
+      - name: Output deployment URL
+        if: success()
+        run: |
+          echo "🌐 GitHub Pages URL: ${{ steps.deployment.outputs.page_url }}"

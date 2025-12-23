@@ -95,18 +95,6 @@ jobs:
             fi
           fi
 
-      # 🚦 TRAFFIC CONTROL / 流量控制
-      # 生成 1 到 300 秒（5分钟）之间的随机延迟
-      # 这对负载均衡至关重要
-      - name: Random Delay (Traffic Control)
-        if: success()
-        run: |
-          echo "🎲 Traffic Control: Generating random delay..."
-          DELAY=$(( ( RANDOM % 300 )  + 1 ))
-          echo "⏸️  Sleeping for ${DELAY} seconds to spread the load..."
-          sleep ${DELAY}s
-          echo "▶️  Delay finished. Starting crawler..."
-
       - name: Set up Python
         if: success()
         uses: actions/setup-python@v5
@@ -140,7 +128,7 @@ jobs:
           EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
-          EMAIL_SMTP_SERVER: ${{ secrets.EMAIL_SMTP_SERVER }}
+          EMAIL_SMTP_SERVER: ${{ secrets.EMAIL_SMTP_PORT }}
           EMAIL_SMTP_PORT: ${{ secrets.EMAIL_SMTP_PORT }}
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
           NTFY_SERVER_URL: ${{ secrets.NTFY_SERVER_URL }}
@@ -158,7 +146,7 @@ jobs:
           GITHUB_ACTIONS: true
         run: python -m trendradar
 
-      # 🔄 部署到 GitHub Pages - 新增步骤
+      # 🔄 部署到 GitHub Pages
       - name: Update index.html for GitHub Pages
         if: success()
         run: |
@@ -208,4 +196,4 @@ jobs:
       - name: Output deployment URL
         if: success()
         run: |
-          echo "🌐 GitHub Pages URL: ${{ steps.deployment.outputs.page_url }}"
+          echo "🌐 GitHub Pages URL: https://wardlee.github.io/TrendRadar/"

@@ -154,40 +154,47 @@ notification:
     bark_url: "" # Bark推送URL（多账号用 ; 分隔，格式：https://api.day.app/your_device_key 或自建服务器地址）
     slack_webhook_url: "" # Slack Incoming Webhook URL（多账号用 ; 分隔，格式：https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX）
 
-# 稍微调高了“热度”的权重，确保推给您的相亲话题是当下讨论最火的
+# 用于让关注度更高的新闻在更前面显示，即用算法重新组合不同平台的热搜排序形成你侧重的热搜，合起来是 1 就行
 weight:
-  rank_weight: 0.5
-  frequency_weight: 0.3
-  hotness_weight: 0.2
+  rank_weight: 0.6 # 排名权重
+  frequency_weight: 0.3 # 频次权重
+  hotness_weight: 0.1 # 热度权重
 
-# 平台列表 (已优化：增加科技源，保留社交/财经源)
+# name 可以定义任意名称，只具有显示作用，即使项目运行了几天后，忽然改掉 name 也不会影响代码的正常运行
 platforms:
-  # --- 科技与深度 ---
-  - id: "36kr"
-    name: "36氪"        # 新增：优质科技/创投媒体
-  - id: "sspai"
-    name: "少数派"      # 新增：数码/效率/生活
-  
-  # --- 财经 ---
-  - id: "wallstreetcn-hot"
-    name: "华尔街见闻"
-  - id: "cls-hot"
-    name: "财联社"
-
-  # --- 综合与热点 (婚恋话题主战场) ---
-  - id: "zhihu"
-    name: "知乎"        # 婚恋观讨论最深的地方
-  - id: "weibo"
-    name: "微博"        # 热搜发源地
-  - id: "douyin"
-    name: "抖音"        # 视频热点
-  - id: "tieba"
-    name: "贴吧"        # 真实生活吐槽
   - id: "toutiao"
     name: "今日头条"
   - id: "baidu"
     name: "百度热搜"
+  - id: "wallstreetcn-hot"
+    name: "华尔街见闻"
   - id: "thepaper"
     name: "澎湃新闻"
+  - id: "bilibili-hot-search"
+    name: "bilibili 热搜"
+  - id: "cls-hot"
+    name: "财联社热门"
   - id: "ifeng"
     name: "凤凰网"
+  - id: "tieba"
+    name: "贴吧"
+  - id: "weibo"
+    name: "微博"
+  - id: "douyin"
+    name: "抖音"
+  - id: "zhihu"
+    name: "知乎"
+  
+  # --- 新增补充平台 ---
+  - id: "36kr"
+    name: "36氪"
+  - id: "sspai"
+    name: "少数派"
+  - id: "huxiu"
+    name: "虎嗅"
+  - id: "ithome"
+    name: "IT之家"
+  - id: "juejin"
+    name: "掘金"
+  - id: "xueqiu"
+    name: "雪球"

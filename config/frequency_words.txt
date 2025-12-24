@@ -38,6 +38,8 @@ DeepSeek
 Kimi
 豆包
 智谱AI
+白嫖
+免费
 
 Agent
 Agents
@@ -134,3 +136,4 @@ GDP
 瑜伽
 医保
 医院
+深圳

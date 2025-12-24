@@ -1,114 +1,134 @@
-app:
-  version_check_url: "https://raw.githubusercontent.com/sansan0/TrendRadar/refs/heads/master/version"
-  show_version_update: true
-  timezone: "Asia/Shanghai"
+[GLOBAL_FILTER]
+广告
+推广
+营销
+震惊
+某明星
+绯闻
+剧透
+优惠券
+立减
+!教程
+!卖课
+!小说
+!短剧
 
-storage:
-  backend: "auto"
-  formats:
-    sqlite: true
-    txt: false
-    html: true
-  local:
-    data_dir: "output"
-    retention_days: 0
-  remote:
-    retention_days: 0
-    endpoint_url: ""
-    bucket_name: ""
-    access_key_id: ""
-    secret_access_key: ""
-    region: ""
-  pull:
-    enabled: false
-    days: 7
+[WORD_GROUPS]
 
-crawler:
-  request_interval: 1000
-  enable_crawler: true
-  use_proxy: false
-  default_proxy: "http://127.0.0.1:10801"
+人工智能
+AI
+AIGC
+AGI
+大模型
+LLM
+生成式AI
++发布
++更新
++开源
++突破
 
-# 推荐使用 "incremental" 模式
-# 这样只会推送新出现的内容，避免每天重复看到同样的相亲话题或旧新闻
-report:
-  mode: "incremental" 
-  rank_threshold: 5
-  sort_by_position_first: false
-  max_news_per_keyword: 0
-  reverse_content_order: false
+ChatGPT
+OpenAI
+Claude
+Anthropic
+Gemini
+DeepMind
+Llama
+DeepSeek
+通义千问
+文心一言
+Kimi
++模型
++测试
++跑分
 
-notification:
-  enable_notification: true
-  message_batch_size: 4000
-  dingtalk_batch_size: 20000
-  feishu_batch_size: 30000
-  bark_batch_size: 4000
-  slack_batch_size: 4000
-  batch_send_interval: 3
-  feishu_message_separator: "━━━━━━━━━━━━━━━━━━━"
-  max_accounts_per_channel: 3
+Agent
+Agents
+智能体
+多模态
+RAG
+CoT
+Transformer
+MoE
+注意力机制
 
-  push_window:
-    enabled: false
-    time_range:
-      start: "20:00"
-      end: "22:00"
-    once_per_day: true
+微调
+Fine-tuning
+预训练
+推理
+部署
+量化
+向量数据库
+LangChain
++优化
++框架
++教程
++最佳实践
 
-  webhooks:
-    # 在这里填入您的 Webhook 地址，或者使用 GitHub Secrets (推荐)
-    feishu_url: ""
-    dingtalk_url: ""
-    wework_url: ""
-    wework_msg_type: "markdown"
-    telegram_bot_token: ""
-    telegram_chat_id: ""
-    email_from: ""
-    email_password: ""
-    email_to: ""
-    email_smtp_server: ""
-    email_smtp_port: ""
-    ntfy_server_url: "https://ntfy.sh"
-    ntfy_topic: ""
-    ntfy_token: ""
-    bark_url: ""
-    slack_webhook_url: ""
+A股
+上证指数
+深证成指
+港股
+美股
++大涨
++大跌
++行情
+!预测
+!推荐
 
-# 稍微调高了“热度”的权重，确保推给您的相亲话题是当下讨论最火的
-weight:
-  rank_weight: 0.5
-  frequency_weight: 0.3
-  hotness_weight: 0.2
+美联储
+加息
+降息
+通胀
+CPI
+GDP
++公布
++数据
 
-# 平台列表 (已优化：增加科技源，保留社交/财经源)
-platforms:
-  # --- 科技与深度 ---
-  - id: "36kr"
-    name: "36氪"        # 新增：优质科技/创投媒体
-  - id: "sspai"
-    name: "少数派"      # 新增：数码/效率/生活
-  
-  # --- 财经 ---
-  - id: "wallstreetcn-hot"
-    name: "华尔街见闻"
-  - id: "cls-hot"
-    name: "财联社"
+相亲
+找对象
+催婚
+红娘
+相亲角
++避坑
++奇葩
++经验
++技巧
+!电视剧
+!剧情
 
-  # --- 综合与热点 (婚恋话题主战场) ---
-  - id: "zhihu"
-    name: "知乎"        # 婚恋观讨论最深的地方
-  - id: "weibo"
-    name: "微博"        # 热搜发源地
-  - id: "douyin"
-    name: "抖音"        # 视频热点
-  - id: "tieba"
-    name: "贴吧"        # 真实生活吐槽
-  - id: "toutiao"
-    name: "今日头条"
-  - id: "baidu"
-    name: "百度热搜"
-  - id: "thepaper"
-    name: "澎湃新闻"
-  - id: "ifeng"
-    name: "凤凰网"
+彩礼
+嫁妆
+结婚率
+离婚率
+婚姻法
+民法典
++新规
++判例
++数据
+!娱乐
+
+联谊
+单身青年
+集体婚礼
++活动
++报名
++通知
+
+健康
+养生
+长寿
+免疫力
++研究
++科普
+!偏方
+!谣言
+
+饮食
+减肥
+运动
+健身
++科学
++指南
+!广告
+!推销
